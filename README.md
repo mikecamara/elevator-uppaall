@@ -5,7 +5,8 @@
 # Introduction
 
 I have created an elevator control system with an elevator manager orchestrating the different operational and functional components except for the user interactions. For simplicity, we restrict our analysis to 4 floors. 
-Functional Requirements
+
+# Functional Requirements
 
 **✅  The Elevator Manager has the following elevator states {inService, floorStop, noOperations, inMaintenance}.**
 
