@@ -49,6 +49,11 @@ int upLEDLight = 0;
 //0 off
 //1 on
 int downLEDLight = 0;
+
+//movementDetected
+//0 no movement
+//1 detected movement
+int movementDetected = 0;
 </declaration>
 	<template>
 		<name x="5" y="5">Door</name>
@@ -94,7 +99,7 @@ downLEDLight := 0</label>
 			<target ref="id2"/>
 			<label kind="guard" x="-178" y="-161">elevatorClock &gt;= 4 
 &amp;&amp; waiting == 0 
-&amp;&amp; safetyUserDection == 0</label>
+&amp;&amp; movementDetected == 0</label>
 			<label kind="synchronisation" x="-178" y="-212">close!</label>
 			<label kind="assignment" x="-178" y="-187">elevatorClock:=0</label>
 			<nail x="25" y="-93"/>
@@ -153,24 +158,48 @@ downLEDLight := 0</label>
 		</transition>
 	</template>
 	<template>
-		<name>ElevatorPanelButton3</name>
-		<location id="id7" x="-297" y="-162">
-			<name x="-424" y="-179">ButtonUnpressed</name>
+		<name>MotionDetectionSensor</name>
+		<location id="id7" x="-374" y="-34">
+			<name x="-518" y="-59">WaitingMovement</name>
 		</location>
-		<location id="id8" x="-110" y="-170">
-			<name x="-93" y="-179">ButtonPressed</name>
+		<location id="id8" x="-102" y="-34">
+			<name x="-112" y="-68">DetectedMovement</name>
 		</location>
 		<init ref="id7"/>
 		<transition>
 			<source ref="id8"/>
 			<target ref="id7"/>
+			<label kind="assignment" x="-313" y="-102">movementDetected := 0</label>
+			<nail x="-136" y="-102"/>
+			<nail x="-331" y="-102"/>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id8"/>
+			<label kind="assignment" x="-331" y="68">movementDetected := 1</label>
+			<nail x="-331" y="51"/>
+			<nail x="-144" y="51"/>
+		</transition>
+	</template>
+	<template>
+		<name>ElevatorPanelButton3</name>
+		<location id="id9" x="-297" y="-162">
+			<name x="-424" y="-179">ButtonUnpressed</name>
+		</location>
+		<location id="id10" x="-110" y="-170">
+			<name x="-93" y="-179">ButtonPressed</name>
+		</location>
+		<init ref="id9"/>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id9"/>
 			<label kind="guard" x="-255" y="-238">currentFloor == 3</label>
 			<nail x="-144" y="-213"/>
 			<nail x="-263" y="-213"/>
 		</transition>
 		<transition>
-			<source ref="id7"/>
-			<target ref="id8"/>
+			<source ref="id9"/>
+			<target ref="id10"/>
 			<label kind="guard" x="-229" y="-52">currentFloor != 3</label>
 			<label kind="assignment" x="-229" y="-77">buttonThirdFloorPressed := 1</label>
 			<nail x="-247" y="-86"/>
@@ -179,23 +208,23 @@ downLEDLight := 0</label>
 	</template>
 	<template>
 		<name>ElevatorPanelButton4</name>
-		<location id="id9" x="-77" y="-145">
+		<location id="id11" x="-77" y="-145">
 			<name x="-204" y="-162">ButtonUnpressed</name>
 		</location>
-		<location id="id10" x="110" y="-153">
+		<location id="id12" x="110" y="-153">
 			<name x="127" y="-162">ButtonPressed</name>
 		</location>
-		<init ref="id9"/>
+		<init ref="id11"/>
 		<transition>
-			<source ref="id10"/>
-			<target ref="id9"/>
+			<source ref="id12"/>
+			<target ref="id11"/>
 			<label kind="guard" x="-35" y="-221">currentFloor == 4</label>
 			<nail x="76" y="-196"/>
 			<nail x="-43" y="-196"/>
 		</transition>
 		<transition>
-			<source ref="id9"/>
-			<target ref="id10"/>
+			<source ref="id11"/>
+			<target ref="id12"/>
 			<label kind="guard" x="-9" y="-35">currentFloor != 4</label>
 			<label kind="assignment" x="-9" y="-60">buttonFourthFloorPressed := 1</label>
 			<nail x="-27" y="-69"/>
@@ -204,75 +233,75 @@ downLEDLight := 0</label>
 	</template>
 	<template>
 		<name>Elevator</name>
-		<location id="id11" x="-560" y="-252">
+		<location id="id13" x="-560" y="-252">
 			<name x="-570" y="-282">downToOne</name>
 		</location>
-		<location id="id12" x="-85" y="144">
+		<location id="id14" x="-85" y="144">
 			<name x="-109" y="170">upToTwo</name>
 		</location>
-		<location id="id13" x="-86" y="-252">
+		<location id="id15" x="-86" y="-252">
 			<name x="-212" y="-280">pickUpDropOff2</name>
 		</location>
-		<location id="id14" x="-561" y="144">
+		<location id="id16" x="-561" y="144">
 			<name x="-595" y="161">pickUpDropOff1</name>
 		</location>
-		<location id="id15" x="-86" y="-84">
+		<location id="id17" x="-86" y="-84">
 			<name x="-178" y="-93">FloorTwo</name>
 		</location>
-		<location id="id16" x="-560" y="-84">
+		<location id="id18" x="-560" y="-84">
 			<name x="-645" y="-102">FloorOne</name>
 		</location>
-		<location id="id17" x="238" y="-255">
+		<location id="id19" x="238" y="-255">
 			<name x="204" y="-289">upToSecond</name>
 		</location>
-		<location id="id18" x="238" y="-85">
+		<location id="id20" x="238" y="-85">
 			<name x="145" y="-76">FloorThree</name>
 		</location>
-		<location id="id19" x="238" y="144">
+		<location id="id21" x="238" y="144">
 			<name x="246" y="119">pickUpDropOff3</name>
 		</location>
-		<location id="id20" x="0" y="144">
+		<location id="id22" x="0" y="144">
 			<name x="0" y="161">downToFirst</name>
 		</location>
-		<location id="id21" x="731" y="-255">
+		<location id="id23" x="731" y="-255">
 			<name x="723" y="-289">pickUpDropOff4</name>
 		</location>
-		<location id="id22" x="731" y="-85">
+		<location id="id24" x="731" y="-85">
 			<name x="748" y="-102">FloorFour</name>
 		</location>
-		<location id="id23" x="731" y="144">
+		<location id="id25" x="731" y="144">
 			<name x="748" y="135">upToFourth</name>
 		</location>
-		<location id="id24" x="425" y="-255">
+		<location id="id26" x="425" y="-255">
 			<name x="382" y="-289">downToThree</name>
 		</location>
-		<init ref="id16"/>
+		<init ref="id18"/>
 		<transition>
-			<source ref="id18"/>
-			<target ref="id22"/>
+			<source ref="id20"/>
+			<target ref="id24"/>
 			<label kind="guard" x="374" y="-127">buttonThirdFloorPressed == 0 &amp;&amp;
 buttonFourthFloorPressed == 1</label>
 		</transition>
 		<transition>
-			<source ref="id15"/>
-			<target ref="id18"/>
+			<source ref="id17"/>
+			<target ref="id20"/>
 		</transition>
 		<transition>
-			<source ref="id21"/>
-			<target ref="id21"/>
+			<source ref="id23"/>
+			<target ref="id23"/>
 			<label kind="synchronisation" x="782" y="-246">userEnterElevator?</label>
 			<nail x="774" y="-212"/>
 			<nail x="774" y="-263"/>
 		</transition>
 		<transition>
-			<source ref="id24"/>
-			<target ref="id18"/>
+			<source ref="id26"/>
+			<target ref="id20"/>
 			<label kind="guard" x="383" y="-204">elevatorClock &gt;= 2</label>
 			<label kind="assignment" x="391" y="-221">currentFloor := 3</label>
 		</transition>
 		<transition>
-			<source ref="id21"/>
-			<target ref="id24"/>
+			<source ref="id23"/>
+			<target ref="id26"/>
 			<label kind="guard" x="476" y="-340">buttonThirdFloorPressed == 1 ||
 buttonSecondFloorPressed == 1||
 buttonFirstFloorPressed == 1</label>
@@ -282,22 +311,22 @@ upLEDLight := 0,
 downLEDLight := 1</label>
 		</transition>
 		<transition>
-			<source ref="id22"/>
-			<target ref="id21"/>
+			<source ref="id24"/>
+			<target ref="id23"/>
 			<label kind="guard" x="740" y="-212">buttonFourthFloorPressed == 1</label>
 			<label kind="synchronisation" x="740" y="-195">open!</label>
 			<label kind="assignment" x="740" y="-170">elevatorDirection := 0,
 buttonFourthFloorPressed := 0</label>
 		</transition>
 		<transition>
-			<source ref="id23"/>
-			<target ref="id22"/>
+			<source ref="id25"/>
+			<target ref="id24"/>
 			<label kind="guard" x="748" y="42">elevatorClock &gt;= 2</label>
 			<label kind="assignment" x="748" y="59">currentFloor := 4</label>
 		</transition>
 		<transition>
-			<source ref="id19"/>
-			<target ref="id23"/>
+			<source ref="id21"/>
+			<target ref="id25"/>
 			<label kind="guard" x="433" y="246">buttonFourthFloorPressed == 1</label>
 			<label kind="synchronisation" x="484" y="161">close?</label>
 			<label kind="assignment" x="450" y="187">elevatorDirection := 2,
@@ -305,14 +334,14 @@ upLEDLight := 1,
 downLEDLight := 0</label>
 		</transition>
 		<transition>
-			<source ref="id20"/>
-			<target ref="id15"/>
+			<source ref="id22"/>
+			<target ref="id17"/>
 			<label kind="guard" x="-51" y="-8">elevatorClock &gt;= 2</label>
 			<label kind="assignment" x="-59" y="-34">currentFloor := 2</label>
 		</transition>
 		<transition>
-			<source ref="id19"/>
-			<target ref="id20"/>
+			<source ref="id21"/>
+			<target ref="id22"/>
 			<label kind="guard" x="25" y="34">buttonFirstFloorPressed == 1 ||
 buttonSecondFloorPressed == 1</label>
 			<label kind="synchronisation" x="102" y="8">close?</label>
@@ -321,44 +350,44 @@ upLEDLight := 0,
 downLEDLight := 1</label>
 		</transition>
 		<transition>
-			<source ref="id18"/>
-			<target ref="id19"/>
+			<source ref="id20"/>
+			<target ref="id21"/>
 			<label kind="synchronisation" x="255" y="25">open!</label>
 			<label kind="assignment" x="255" y="42">elevatorClock:=2, 
 elevatorDirection := 0,
 buttonThirdFloorPressed := 0</label>
 		</transition>
 		<transition>
-			<source ref="id17"/>
-			<target ref="id18"/>
+			<source ref="id19"/>
+			<target ref="id20"/>
 			<label kind="guard" x="187" y="-204">elevatorClock &gt;= 2</label>
 			<label kind="assignment" x="111" y="-221">currentFloor := 3</label>
 		</transition>
 		<transition>
-			<source ref="id13"/>
-			<target ref="id17"/>
+			<source ref="id15"/>
+			<target ref="id19"/>
 			<label kind="guard" x="-25" y="-314">buttonThirdFloorPressed == 1 ||
 buttonFourthFloorPressed == 1</label>
 			<label kind="synchronisation" x="-25" y="-348">close?</label>
 			<label kind="assignment" x="-25" y="-331">elevatorDirection := 2</label>
 		</transition>
 		<transition>
-			<source ref="id13"/>
-			<target ref="id13"/>
+			<source ref="id15"/>
+			<target ref="id15"/>
 			<label kind="synchronisation" x="-152" y="-391">userEnterElevator?</label>
 			<nail x="-59" y="-365"/>
 			<nail x="-110" y="-365"/>
 		</transition>
 		<transition>
-			<source ref="id14"/>
-			<target ref="id14"/>
+			<source ref="id16"/>
+			<target ref="id16"/>
 			<label kind="synchronisation" x="-784" y="152">userEnterElevator?</label>
 			<nail x="-748" y="76"/>
 			<nail x="-748" y="144"/>
 		</transition>
 		<transition>
-			<source ref="id13"/>
-			<target ref="id11"/>
+			<source ref="id15"/>
+			<target ref="id13"/>
 			<label kind="guard" x="-433" y="-280">buttonFirstFloorPressed == 1</label>
 			<label kind="synchronisation" x="-373" y="-365">close?</label>
 			<label kind="assignment" x="-416" y="-340">elevatorDirection := 1,
@@ -367,20 +396,20 @@ downLEDLight := 1</label>
 			<nail x="-169" y="-252"/>
 		</transition>
 		<transition>
-			<source ref="id11"/>
-			<target ref="id16"/>
+			<source ref="id13"/>
+			<target ref="id18"/>
 			<label kind="guard" x="-549" y="-204">elevatorClock &gt;= 2</label>
 			<label kind="assignment" x="-549" y="-187">currentFloor := 1</label>
 		</transition>
 		<transition>
-			<source ref="id12"/>
-			<target ref="id15"/>
+			<source ref="id14"/>
+			<target ref="id17"/>
 			<label kind="guard" x="-212" y="17">elevatorClock &gt;= 2</label>
 			<label kind="assignment" x="-204" y="42">currentFloor := 2</label>
 		</transition>
 		<transition>
-			<source ref="id14"/>
-			<target ref="id12"/>
+			<source ref="id16"/>
+			<target ref="id14"/>
 			<label kind="guard" x="-433" y="85">buttonSecondFloorPressed == 1 ||
 buttonThirdFloorPressed == 1 ||
 buttonFourthFloorPressed == 1</label>
@@ -390,8 +419,8 @@ upLEDLight := 1,
 downLEDLight := 0</label>
 		</transition>
 		<transition>
-			<source ref="id15"/>
-			<target ref="id13"/>
+			<source ref="id17"/>
+			<target ref="id15"/>
 			<label kind="guard" x="-314" y="-136">buttonSecondFloorPressed == 1</label>
 			<label kind="synchronisation" x="-135" y="-212">open!</label>
 			<label kind="assignment" x="-314" y="-195">elevatorClock:=2, 
@@ -399,15 +428,15 @@ elevatorDirection := 0,
 buttonSecondFloorPressed := 0</label>
 		</transition>
 		<transition>
-			<source ref="id16"/>
-			<target ref="id14"/>
+			<source ref="id18"/>
+			<target ref="id16"/>
 			<label kind="guard" x="-697" y="51">elevatorStatus == 2</label>
 			<label kind="synchronisation" x="-603" y="34">open!</label>
 			<label kind="assignment" x="-688" y="76">elevatorClock := 2</label>
 		</transition>
 		<transition>
-			<source ref="id19"/>
-			<target ref="id19"/>
+			<source ref="id21"/>
+			<target ref="id21"/>
 			<label kind="synchronisation" x="196" y="213">userEnterElevator?</label>
 			<nail x="298" y="196"/>
 			<nail x="238" y="196"/>
@@ -415,31 +444,6 @@ buttonSecondFloorPressed := 0</label>
 	</template>
 	<template>
 		<name>ButtonFirstFloor</name>
-		<location id="id25" x="0" y="0">
-			<name x="-127" y="-17">ButtonUnpressed</name>
-		</location>
-		<location id="id26" x="187" y="-8">
-			<name x="204" y="-17">ButtonPressed</name>
-		</location>
-		<init ref="id25"/>
-		<transition>
-			<source ref="id26"/>
-			<target ref="id25"/>
-			<label kind="guard" x="42" y="-76">currentFloor == 1</label>
-			<nail x="153" y="-51"/>
-			<nail x="34" y="-51"/>
-		</transition>
-		<transition>
-			<source ref="id25"/>
-			<target ref="id26"/>
-			<label kind="guard" x="68" y="110">currentFloor != 1</label>
-			<label kind="assignment" x="68" y="85">buttonFirstFloorPressed := 1</label>
-			<nail x="50" y="76"/>
-			<nail x="143" y="76"/>
-		</transition>
-	</template>
-	<template>
-		<name>ButtonSecondFloor</name>
 		<location id="id27" x="0" y="0">
 			<name x="-127" y="-17">ButtonUnpressed</name>
 		</location>
@@ -450,21 +454,21 @@ buttonSecondFloorPressed := 0</label>
 		<transition>
 			<source ref="id28"/>
 			<target ref="id27"/>
-			<label kind="guard" x="42" y="-76">currentFloor == 2</label>
+			<label kind="guard" x="42" y="-76">currentFloor == 1</label>
 			<nail x="153" y="-51"/>
 			<nail x="34" y="-51"/>
 		</transition>
 		<transition>
 			<source ref="id27"/>
 			<target ref="id28"/>
-			<label kind="guard" x="68" y="110">currentFloor != 2</label>
-			<label kind="assignment" x="68" y="85">buttonSecondFloorPressed := 1</label>
+			<label kind="guard" x="68" y="110">currentFloor != 1</label>
+			<label kind="assignment" x="68" y="85">buttonFirstFloorPressed := 1</label>
 			<nail x="50" y="76"/>
 			<nail x="143" y="76"/>
 		</transition>
 	</template>
 	<template>
-		<name>ButtonThirdFloor</name>
+		<name>ButtonSecondFloor</name>
 		<location id="id29" x="0" y="0">
 			<name x="-127" y="-17">ButtonUnpressed</name>
 		</location>
@@ -475,21 +479,21 @@ buttonSecondFloorPressed := 0</label>
 		<transition>
 			<source ref="id30"/>
 			<target ref="id29"/>
-			<label kind="guard" x="42" y="-76">currentFloor == 3</label>
+			<label kind="guard" x="42" y="-76">currentFloor == 2</label>
 			<nail x="153" y="-51"/>
 			<nail x="34" y="-51"/>
 		</transition>
 		<transition>
 			<source ref="id29"/>
 			<target ref="id30"/>
-			<label kind="guard" x="68" y="110">currentFloor != 3</label>
-			<label kind="assignment" x="68" y="85">buttonThirdFloorPressed := 1</label>
+			<label kind="guard" x="68" y="110">currentFloor != 2</label>
+			<label kind="assignment" x="68" y="85">buttonSecondFloorPressed := 1</label>
 			<nail x="50" y="76"/>
 			<nail x="143" y="76"/>
 		</transition>
 	</template>
 	<template>
-		<name>ButtonFourthFloor</name>
+		<name>ButtonThirdFloor</name>
 		<location id="id31" x="0" y="0">
 			<name x="-127" y="-17">ButtonUnpressed</name>
 		</location>
@@ -500,13 +504,38 @@ buttonSecondFloorPressed := 0</label>
 		<transition>
 			<source ref="id32"/>
 			<target ref="id31"/>
-			<label kind="guard" x="42" y="-76">currentFloor == 4</label>
+			<label kind="guard" x="42" y="-76">currentFloor == 3</label>
 			<nail x="153" y="-51"/>
 			<nail x="34" y="-51"/>
 		</transition>
 		<transition>
 			<source ref="id31"/>
 			<target ref="id32"/>
+			<label kind="guard" x="68" y="110">currentFloor != 3</label>
+			<label kind="assignment" x="68" y="85">buttonThirdFloorPressed := 1</label>
+			<nail x="50" y="76"/>
+			<nail x="143" y="76"/>
+		</transition>
+	</template>
+	<template>
+		<name>ButtonFourthFloor</name>
+		<location id="id33" x="0" y="0">
+			<name x="-127" y="-17">ButtonUnpressed</name>
+		</location>
+		<location id="id34" x="187" y="-8">
+			<name x="204" y="-17">ButtonPressed</name>
+		</location>
+		<init ref="id33"/>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id33"/>
+			<label kind="guard" x="42" y="-76">currentFloor == 4</label>
+			<nail x="153" y="-51"/>
+			<nail x="34" y="-51"/>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id34"/>
 			<label kind="guard" x="68" y="110">currentFloor != 4</label>
 			<label kind="assignment" x="68" y="85">buttonFourthFloorPressed := 1</label>
 			<nail x="50" y="76"/>
@@ -515,52 +544,52 @@ buttonSecondFloorPressed := 0</label>
 	</template>
 	<template>
 		<name>ElevatorManager</name>
-		<location id="id33" x="-348" y="-110">
-			<name x="-382" y="-153">noOperaration</name>
+		<location id="id35" x="-348" y="-110">
+			<name x="-382" y="-153">noOperation</name>
 		</location>
-		<location id="id34" x="-348" y="8">
+		<location id="id36" x="-348" y="8">
 			<name x="-340" y="-17">inService</name>
 		</location>
-		<location id="id35" x="-68" y="-110">
+		<location id="id37" x="-68" y="-110">
 			<name x="-78" y="-144">inMaintenance</name>
 		</location>
-		<location id="id36" x="-68" y="8">
+		<location id="id38" x="-68" y="8">
 			<name x="-51" y="0">floorStop</name>
 		</location>
-		<init ref="id33"/>
+		<init ref="id35"/>
 		<transition>
-			<source ref="id35"/>
-			<target ref="id33"/>
+			<source ref="id37"/>
+			<target ref="id35"/>
 			<label kind="guard" x="-255" y="-127">inMaintenanceMode == 0</label>
 			<label kind="assignment" x="-255" y="-144">elevatorStatus := 1</label>
 		</transition>
 		<transition>
-			<source ref="id36"/>
-			<target ref="id35"/>
+			<source ref="id38"/>
+			<target ref="id37"/>
 			<label kind="guard" x="-59" y="-68">inMaintenanceMode == 1</label>
 			<label kind="assignment" x="-59" y="-51">elevatorStatus := 4</label>
 		</transition>
 		<transition>
-			<source ref="id36"/>
-			<target ref="id33"/>
+			<source ref="id38"/>
+			<target ref="id35"/>
 			<label kind="assignment" x="-221" y="-76">elevatorStatus := 1</label>
 		</transition>
 		<transition>
-			<source ref="id34"/>
-			<target ref="id36"/>
+			<source ref="id36"/>
+			<target ref="id38"/>
 			<label kind="guard" x="-272" y="25">elevatorDirection == 0</label>
 			<label kind="assignment" x="-272" y="8">elevatorStatus := 3</label>
 		</transition>
 		<transition>
-			<source ref="id34"/>
-			<target ref="id34"/>
+			<source ref="id36"/>
+			<target ref="id36"/>
 			<nail x="-408" y="8"/>
 			<nail x="-408" y="68"/>
 			<nail x="-348" y="68"/>
 		</transition>
 		<transition>
-			<source ref="id33"/>
-			<target ref="id34"/>
+			<source ref="id35"/>
+			<target ref="id36"/>
 			<label kind="guard" x="-578" y="-119">buttonFirstFloorPressed == 1
 || buttonSecondFloorPressed == 1
 || buttonThirdFloorPressed == 1
@@ -579,11 +608,44 @@ ElevatorManager,
 ElevatorPanelButton1,
 ElevatorPanelButton2,
 ElevatorPanelButton3,
-ElevatorPanelButton4;</system>
+ElevatorPanelButton4,
+MotionDetectionSensor;</system>
 	<queries>
 		<query>
-			<formula></formula>
+			<formula>E[] Elevator.FloorOne and buttonFirstFloorPressed == 0</formula>
 			<comment></comment>
+		</query>
+		<query>
+			<formula>E[] ElevatorManager.noOperation</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>A&lt;&gt; Door.elevatorDoorClosed</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Elevator.pickUpDropOff4</formula>
+			<comment>The Elevator will eventually be stopped in floor 4 picking up or dropping off passengers.</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Elevator.pickUpDropOff3</formula>
+			<comment>The Elevator will eventually be stopped in floor 3 picking up or dropping off passengers.</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Elevator.pickUpDropOff2</formula>
+			<comment>The Elevator will eventually be stopped in floor 2 picking up or dropping off passengers.</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Elevator.pickUpDropOff1</formula>
+			<comment>The Elevator will eventually be stopped in floor 1 picking up or dropping off passengers.</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; ElevatorManager.noOperation</formula>
+			<comment>The Elevator Manager will eventually be in no operation mode.</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; ElevatorManager.floorStop</formula>
+			<comment>The Elevator Manager will eventually be stopped in a floor.</comment>
 		</query>
 		<query>
 			<formula>E&lt;&gt; ElevatorManager.inService</formula>
